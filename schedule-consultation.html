@@ -79,7 +79,7 @@
         <!-- Form -->
         <div class="glass-panel p-8 md:p-12 rounded-2xl">
             <form id="consultation-form" action="https://formsubmit.co/vcpartnersgroup@gmail.com" method="POST" class="space-y-6">
-                <input type="hidden" name="_next" value="https://v-c-p.github.io/Webpage/thank-you.html">
+                <input type="hidden" name="_next" id="redirect-url" value="">
                 <input type="hidden" name="_subject" value="New Consultation Request - VCP">
 
                 <!-- Name -->
@@ -198,7 +198,10 @@
 
     <script>
         lucide.createIcons();
-        // Form will submit normally to FormSubmit and redirect to thank-you page
+
+        // Set redirect URL dynamically based on current domain
+        const redirectUrl = window.location.origin + '/thank-you.html';
+        document.getElementById('redirect-url').value = redirectUrl;
     </script>
 </body>
 </html>
