@@ -1,0 +1,1390 @@
+<!DOCTYPE html>
+<html lang="en"> <!-- Removed scroll-smooth here initially -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vegas Consulting Partners | Hospitality Automation</title>
+    <meta name="description" content="Vegas Consulting Partners - Optimizing Miami's hospitality industry through AI and Automation.">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/logo.png">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Configuration -->
+    <script>
+        // Force manual scroll restoration immediately
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+        
+        // Clear hash from URL to prevent jumping
+        if (window.location.hash) {
+            window.history.replaceState("", document.title, window.location.pathname + window.location.search);
+        }
+
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        vcp: {
+                            black: '#000000', // Pure Black
+                            dark: '#0a0a0a',
+                            yellow: '#fdc435',
+                            gold: '#e5b12f',
+                            amber: '#ff9d00', // Root endpoints
+                            highlight: '#ffd666',
+                            glass: 'rgba(20, 20, 20, 0.4)',
+                            glassBorder: 'rgba(253, 196, 53, 0.2)',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    fontSize: {
+                        '7xl': '4.5rem',
+                        '8xl': '6rem',
+                        '9xl': '8rem',
+                        'massive': '10rem',
+                    },
+                    animation: {
+                        'marquee': 'marquee 25s linear infinite',
+                        'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'logo-breathe': 'logoBreathe 3s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        marquee: {
+                            '0%': { transform: 'translateX(0%)' },
+                            '100%': { transform: 'translateX(-100%)' },
+                        },
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        logoBreathe: {
+                            '0%, 100%': { transform: 'scale(1)', opacity: '1' },
+                            '50%': { transform: 'scale(1.05)', opacity: '0.8' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Utilities */
+        ::selection {
+            background-color: #fdc435;
+            color: #000000;
+        }
+        
+        body {
+            background-color: #000000;
+            color: white;
+            overflow-x: hidden; /* Kept hidden initially */
+        }
+        
+        /* Re-add smooth scrolling via class later */
+        .smooth-scroll {
+            scroll-behavior: smooth;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #000000;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #fdc435;
+        }
+
+        /* Glassmorphism Utility */
+        .glass-panel {
+            background: rgba(10, 10, 10, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(253, 196, 53, 0.15);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Text Rotation 3D Effect */
+        .rotating-text-wrapper {
+            perspective: 1000px;
+            display: inline-block;
+            position: relative;
+            height: 1.1em;
+            width: 100%;
+            text-align: center;
+        }
+        .rotating-word {
+            display: inline-block;
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.6s ease;
+            position: absolute;
+            left: 0;
+            right: 0;
+            margin: auto;
+            top: 0;
+            backface-visibility: hidden;
+        }
+        .word-hidden {
+            opacity: 0;
+            transform: rotateX(-90deg) translateY(40px);
+        }
+        .word-visible {
+            opacity: 1;
+            transform: rotateX(0deg) translateY(0);
+        }
+        .word-exiting {
+            opacity: 0;
+            transform: rotateX(90deg) translateY(-40px);
+        }
+
+        /* Nav Scroll Behavior */
+        .nav-hidden {
+            transform: translateY(-100%);
+        }
+        .nav-visible {
+            transform: translateY(0);
+        }
+        
+        /* Dropdown Animation */
+        .dropdown-menu {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+        .group:hover .dropdown-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        /* Modal Styles */
+        .modal-open {
+            overflow: hidden;
+        }
+
+        /* Kinetic Typography */
+        .kinetic-letter {
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            cursor: default;
+        }
+        .kinetic-letter:hover {
+            transform: scale(1.1) skewX(-10deg);
+            color: #fdc435;
+            text-shadow: 0 0 20px rgba(253, 196, 53, 0.5);
+        }
+
+        /* --- NEW LOGO STYLES --- */
+        .logo-minimal {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .logo-minimal-main {
+            font-family: 'Inter', sans-serif;
+            font-size: 6rem; /* Increased from 5rem */
+            font-weight: 900;
+            color: #ffffff;
+            letter-spacing: 0.05em;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            line-height: 1;
+        }
+
+        .logo-minimal-main::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: #fdc435;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .logo-minimal:hover .logo-minimal-main {
+            letter-spacing: 0.08em;
+            text-shadow: 0 0 20px rgba(253, 196, 53, 0.3);
+        }
+
+        .logo-minimal:hover .logo-minimal-main::after {
+            width: 100%;
+        }
+
+        .logo-minimal-separator {
+            width: 3px;
+            height: 90px; /* Increased from 80px */
+            background: linear-gradient(to bottom, transparent, #fdc435, transparent);
+            transition: all 0.4s ease;
+            animation: pulse-line 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-line {
+            0%, 100% { opacity: 0.6; transform: scaleY(1); }
+            50% { opacity: 1; transform: scaleY(1.1); }
+        }
+
+        .logo-minimal:hover .logo-minimal-separator {
+            width: 4px;
+            box-shadow: 0 0 15px rgba(253, 196, 53, 0.6);
+            animation: none;
+            opacity: 1;
+        }
+
+        .logo-minimal-text {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .logo-minimal-line {
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem; /* Increased from 0.8rem */
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.7);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            transform-origin: left center;
+            opacity: 0;
+            transform: translateX(-20px);
+            animation-fill-mode: forwards;
+            white-space: nowrap; /* Prevent wrapping/misalignment */
+        }
+
+        /* Animation Delays - Adjusted for slow reveal */
+        .logo-minimal-line:nth-child(1) { animation: slideIn 3s ease-out 0.5s forwards; }
+        .logo-minimal-line:nth-child(2) { animation: slideIn 3s ease-out 2.0s forwards; }
+        .logo-minimal-line:nth-child(3) { animation: slideIn 3s ease-out 3.5s forwards; }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .logo-minimal:hover .logo-minimal-line {
+            color: rgba(255, 255, 255, 0.95);
+            letter-spacing: 0.15em;
+            transform: translateX(5px);
+        }
+
+        .logo-minimal-line span {
+            color: #fdc435;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .logo-minimal:hover .logo-minimal-line span {
+            text-shadow: 0 0 10px rgba(253, 196, 53, 0.8);
+            transform: scale(1.1);
+        }
+
+        /* Preloader Specific */
+        #preloader {
+            position: fixed;
+            inset: 0;
+            background: #000000;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s ease-out;
+        }
+
+        /* Microsoft Logo CSS */
+        .ms-logo {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2px;
+            width: 24px;
+            height: 24px;
+        }
+        .ms-tile { width: 100%; height: 100%; }
+        .ms-red { background-color: #f25022; }
+        .ms-green { background-color: #7fba00; }
+        .ms-blue { background-color: #00a4ef; }
+        .ms-yellow { background-color: #ffb900; }
+    </style>
+</head>
+<body class="antialiased selection:bg-vcp-yellow selection:text-black overflow-hidden">
+
+    <!-- Force Scroll to Top Immediately -->
+    <script>
+        window.scrollTo(0, 0);
+    </script>
+
+    <!-- PRELOADER -->
+    <div id="preloader">
+        <!-- Render Logo Scale 1.0 -->
+        <div class="scale-75 md:scale-100">
+            <div class="logo-minimal">
+                <div class="logo-minimal-main">VCP</div>
+                <div class="logo-minimal-separator"></div>
+                <div class="logo-minimal-text">
+                    <div class="logo-minimal-line"><span>V</span>egas</div>
+                    <div class="logo-minimal-line"><span>C</span>onsulting</div>
+                    <div class="logo-minimal-line"><span>P</span>artners</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed w-full top-0 z-50 transition-transform duration-300 border-b border-white/5 bg-black/80 backdrop-blur-md nav-visible">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-24">
+                <!-- Logo -->
+                <a href="#hero" class="flex items-center group">
+                    <!-- Container for scaled logo -->
+                    <div style="transform: scale(0.6); transform-origin: left center;" class="w-[250px]">
+                        <div class="logo-minimal">
+                            <div class="logo-minimal-main">VCP</div>
+                            <div class="logo-minimal-separator"></div>
+                            <div class="logo-minimal-text">
+                                <div class="logo-minimal-line"><span>V</span>egas</div>
+                                <div class="logo-minimal-line"><span>C</span>onsulting</div>
+                                <div class="logo-minimal-line"><span>P</span>artners</div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-10">
+                    <a href="#features" class="text-gray-300 hover:text-vcp-yellow transition-colors text-xs font-bold uppercase tracking-widest">The Concept</a>
+                    <a href="#how-it-works" class="text-gray-300 hover:text-vcp-yellow transition-colors text-xs font-bold uppercase tracking-widest">How It Works</a>
+                    <a href="#collections" class="text-gray-300 hover:text-vcp-yellow transition-colors text-xs font-bold uppercase tracking-widest">Collections</a>
+                    
+                    <a href="#contact" class="px-6 py-2 border border-vcp-yellow text-vcp-yellow hover:bg-vcp-yellow hover:text-black transition-all duration-300 text-xs font-bold uppercase tracking-widest">
+                        Get in Touch
+                    </a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-white hover:text-vcp-yellow focus:outline-none">
+                        <i data-lucide="menu" class="w-6 h-6"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Overlay -->
+        <div id="mobile-menu" class="fixed inset-0 z-40 bg-black/95 backdrop-blur-xl transform translate-x-full transition-transform duration-300 flex flex-col justify-center items-center space-y-8 md:hidden">
+            <button id="close-menu-btn" class="absolute top-6 right-6 text-white hover:text-vcp-yellow">
+                <i data-lucide="x" class="w-8 h-8"></i>
+            </button>
+            <a href="#features" class="text-2xl text-white font-light hover:text-vcp-yellow">The Concept</a>
+            <a href="#how-it-works" class="text-2xl text-white font-light hover:text-vcp-yellow">How It Works</a>
+            <a href="#collections" class="text-2xl text-white font-light hover:text-vcp-yellow">Collections</a>
+            <a href="#contact" class="text-xl text-black bg-vcp-yellow px-8 py-3 font-bold uppercase">Contact Us</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="hero" class="relative h-screen w-full overflow-hidden flex items-center justify-center">
+        <!-- Hologram Canvas -->
+        <canvas id="hero-canvas" class="absolute top-0 left-0 w-full h-full z-0 opacity-100"></canvas>
+        
+        <!-- Content Container (Centered) -->
+        <div class="relative z-10 w-full max-w-full px-4 sm:px-6 lg:px-8 h-full pointer-events-none flex flex-col justify-center items-center">
+            
+            <!-- Centered Headlines -->
+            <div id="hero-text" class="text-center pointer-events-auto z-20 relative top-[-50px]">
+                <!-- Much Larger Text Classes -->
+                <h1 class="text-6xl md:text-8xl lg:text-massive font-extrabold text-white leading-[0.9] tracking-tighter mb-8 drop-shadow-2xl">
+                    Welcome to<br>
+                    <div class="rotating-text-wrapper text-vcp-yellow mt-4 mx-auto w-full text-center h-20 md:h-32 lg:h-48">
+                        <div class="relative h-full w-full flex justify-center">
+                            <span class="rotating-word word-visible w-full text-center absolute">the edge.</span>
+                            <span class="rotating-word word-hidden w-full text-center absolute">the solution.</span>
+                            <span class="rotating-word word-hidden w-full text-center absolute">the advantage.</span>
+                        </div>
+                    </div>
+                </h1>
+            </div>
+
+            <!-- Bottom Info (Split) -->
+            <div class="absolute bottom-12 w-full flex justify-between items-end px-8 pointer-events-auto max-w-7xl">
+                 <div class="hidden md:block w-64 text-xs text-gray-500 leading-relaxed">
+                    HARMONIZING ECOSYSTEMS<br>
+                    PRECISION AUTOMATION<br>
+                    AI-DRIVEN EFFICIENCY
+                 </div>
+                 
+                 <!-- Scroll Indicator -->
+                <div class="flex flex-col items-center opacity-70 animate-bounce">
+                    <span class="text-[10px] uppercase font-bold tracking-[0.3em] mb-3 text-gray-400">Scroll</span>
+                    <i data-lucide="arrow-down" class="w-4 h-4 text-vcp-yellow"></i>
+                </div>
+
+                 <div class="hidden md:block w-64 text-right">
+                     <a href="#features" class="group inline-flex items-center text-white text-xs font-bold uppercase tracking-widest hover:text-vcp-yellow transition-colors">
+                        Explore The Logic
+                        <i data-lucide="arrow-right" class="ml-2 w-4 h-4 transform group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                 </div>
+            </div>
+        </div>
+        
+        <!-- Vignette Overlay for Depth -->
+        <div class="absolute inset-0 pointer-events-none bg-radial-gradient z-0"></div>
+        <style>
+            .bg-radial-gradient {
+                background: radial-gradient(circle at center, transparent 0%, #000000 90%);
+            }
+        </style>
+    </section>
+
+    <!-- The Concept Section -->
+    <section id="features" class="py-32 relative overflow-hidden bg-[#050505] border-t border-white/5">
+        <!-- Background Abstract -->
+        <div class="absolute inset-0 pointer-events-none opacity-20">
+             <div class="absolute top-[-20%] right-[-10%] w-[800px] h-[800px] bg-vcp-yellow/10 rounded-full blur-[150px]"></div>
+             <div class="absolute bottom-[-20%] left-[-10%] w-[800px] h-[800px] bg-blue-900/10 rounded-full blur-[150px]"></div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-32">
+                <h2 class="text-2xl md:text-3xl text-vcp-yellow font-bold tracking-[0.5em] uppercase mb-8 animate-pulse">The VCP Concept</h2>
+                <h3 class="text-7xl md:text-9xl font-black text-white mb-8 tracking-tighter leading-none">WHO WE ARE</h3>
+                <div class="h-1 w-48 bg-white/20 mx-auto"></div>
+            </div>
+
+            <!-- 1. The Problem (Time vs Tech) -->
+            <div class="flex flex-col md:flex-row items-center gap-16 mb-32">
+                <div class="w-full md:w-1/2">
+                    <h4 class="text-3xl md:text-4xl font-bold text-white mb-6 leading-tight">
+                        The world is moving faster than anyone can <span class="text-vcp-yellow">keep up.</span>
+                    </h4>
+                    <p class="text-gray-400 text-lg mb-6 leading-relaxed">
+                        New AI tools drop every day. Systems suddenly connect. The software you just mastered? Already old news. And while you're working, your competitors are automating.
+                    </p>
+                    <div class="glass-panel p-8 border-l-4 border-vcp-yellow">
+                        <p class="text-xl text-white font-bold italic">
+                            "The real problem isn’t tech—it’s time."
+                        </p>
+                    </div>
+                </div>
+                <div class="w-full md:w-1/2 relative h-[400px] rounded-lg overflow-hidden border border-white/10 group">
+                    <img src="https://images.unsplash.com/photo-1495364141860-b0d03eccd065?auto=format&fit=crop&w=1000&q=80" alt="Time Speed" class="absolute inset-0 w-full h-full object-cover opacity-60 grayscale group-hover:grayscale-0 transition-all duration-700 scale-105 group-hover:scale-100">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+                </div>
+            </div>
+
+            <!-- 2. The Solution (Tech Scouts) -->
+            <div class="flex flex-col md:flex-row-reverse items-center gap-16 mb-32">
+                <div class="w-full md:w-1/2">
+                    <h4 class="text-3xl md:text-4xl font-bold text-white mb-6 leading-tight">
+                        We live in the future so <span class="text-blue-400">you don’t have to.</span>
+                    </h4>
+                    <p class="text-gray-400 text-lg mb-8 leading-relaxed">
+                        Your team is smart, but buried in spreadsheets. No one has the bandwidth to explore what’s possible. That’s where VCP comes in. We spend our days finding tools most people won’t hear about for a year.
+                    </p>
+                    <div class="flex items-center space-x-4 text-white">
+                        <div class="p-3 bg-white/5 rounded-full border border-white/10"><i data-lucide="map" class="w-6 h-6 text-vcp-yellow"></i></div>
+                        <div>
+                            <h5 class="font-bold uppercase text-sm tracking-widest">Tech Scouts</h5>
+                            <p class="text-gray-500 text-sm">You run the business; we map the shortcuts.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full md:w-1/2 relative h-[400px] rounded-lg overflow-hidden border border-white/10 group">
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1000&q=80" alt="Future Tech" class="absolute inset-0 w-full h-full object-cover opacity-60 grayscale group-hover:grayscale-0 transition-all duration-700 scale-105 group-hover:scale-100">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+                </div>
+            </div>
+
+            <!-- 3. The Result (Profit Fast) -->
+            <div class="glass-panel p-12 text-center max-w-4xl mx-auto relative overflow-hidden">
+                <div class="absolute top-[-50%] left-[-20%] w-[300px] h-[300px] bg-vcp-yellow/20 rounded-full blur-[100px]"></div>
+                
+                <h4 class="text-4xl font-bold text-white mb-6">We turn possibility into profit—<span class="text-vcp-yellow italic">fast.</span></h4>
+                <p class="text-gray-300 text-lg mb-10 max-w-2xl mx-auto">
+                    No bloated consulting projects. Just practical solutions that make a difference by Monday morning: automations that save hours, integrations that cut errors, and intelligence that helps you move quicker than the competition.
+                </p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
+                    <div class="bg-black/40 p-6 border-l-2 border-vcp-yellow">
+                        <i data-lucide="zap" class="w-6 h-6 text-vcp-yellow mb-3"></i>
+                        <h5 class="text-white font-bold mb-1">Speed</h5>
+                        <p class="text-gray-500 text-sm">Move faster than the market.</p>
+                    </div>
+                    <div class="bg-black/40 p-6 border-l-2 border-blue-500">
+                        <i data-lucide="link" class="w-6 h-6 text-blue-500 mb-3"></i>
+                        <h5 class="text-white font-bold mb-1">Connection</h5>
+                        <p class="text-gray-500 text-sm">Systems that actually talk.</p>
+                    </div>
+                    <div class="bg-black/40 p-6 border-l-2 border-purple-500">
+                        <i data-lucide="brain-circuit" class="w-6 h-6 text-purple-500 mb-3"></i>
+                        <h5 class="text-white font-bold mb-1">Insight</h5>
+                        <p class="text-gray-500 text-sm">Know what actually matters.</p>
+                    </div>
+                </div>
+
+                <div class="mt-12 pt-12 border-t border-white/10">
+                    <p class="text-2xl font-light text-white mb-2">The future won’t slow down.</p>
+                    <p class="text-xl font-bold text-vcp-yellow mb-8">But you don’t have to face it alone.</p>
+                    <a href="#contact" class="inline-block px-8 py-4 bg-vcp-yellow text-black font-bold uppercase tracking-widest hover:bg-white transition-colors">Welcome to what's possible</a>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Marquee Section -->
+    <section class="py-8 bg-vcp-yellow text-black overflow-hidden">
+        <div class="relative w-full flex overflow-hidden">
+            <div class="animate-marquee whitespace-nowrap flex items-center">
+                <span class="mx-12 text-6xl font-black tracking-tighter hover:opacity-50 transition-opacity cursor-default">AUTOMATE</span>
+                <span class="mx-12 text-6xl font-black tracking-tighter hover:opacity-50 transition-opacity cursor-default">STREAMLINE</span>
+                <span class="mx-12 text-6xl font-black tracking-tighter hover:opacity-50 transition-opacity cursor-default">OPTIMIZE</span>
+                <span class="mx-12 text-6xl font-black tracking-tighter hover:opacity-50 transition-opacity cursor-default">SCALE</span>
+                <span class="mx-12 text-6xl font-black tracking-tighter hover:opacity-50 transition-opacity cursor-default">INTEGRATE</span>
+                <span class="mx-12 text-6xl font-black tracking-tighter hover:opacity-50 transition-opacity cursor-default">INNOVATE</span>
+            </div>
+             <div class="absolute top-0 animate-marquee2 whitespace-nowrap flex items-center" style="left: 100%">
+                <span class="mx-12 text-6xl font-black tracking-tighter hover:opacity-50 transition-opacity cursor-default">AUTOMATE</span>
+                <span class="mx-12 text-6xl font-black tracking-tighter hover:opacity-50 transition-opacity cursor-default">STREAMLINE</span>
+                <span class="mx-12 text-6xl font-black tracking-tighter hover:opacity-50 transition-opacity cursor-default">OPTIMIZE</span>
+                <span class="mx-12 text-6xl font-black tracking-tighter hover:opacity-50 transition-opacity cursor-default">SCALE</span>
+                <span class="mx-12 text-6xl font-black tracking-tighter hover:opacity-50 transition-opacity cursor-default">INTEGRATE</span>
+                <span class="mx-12 text-6xl font-black tracking-tighter hover:opacity-50 transition-opacity cursor-default">INNOVATE</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="py-32 bg-vcp-dark relative border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-20 lg:hidden">
+                <h2 class="text-xs text-vcp-yellow font-bold tracking-[0.2em] uppercase mb-6">The Process</h2>
+                <h3 class="text-4xl font-extrabold text-white mb-6 tracking-tighter">How It Works</h3>
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-16 items-start">
+                
+                <!-- Left Column: Process Steps -->
+                <div class="w-full lg:w-3/5 space-y-16">
+                    
+                    <!-- Desktop Header (Left Aligned) -->
+                    <div class="hidden lg:block mb-8">
+                        <h2 class="text-xs text-vcp-yellow font-bold tracking-[0.2em] uppercase mb-4">The Process</h2>
+                        <h3 class="text-6xl font-extrabold text-white tracking-tighter">How It Works</h3>
+                    </div>
+
+                    <!-- Step 1 -->
+                    <div class="relative pl-12 group">
+                        <div class="absolute top-0 left-0 text-4xl font-black text-white/20 select-none group-hover:text-vcp-yellow transition-colors">1</div>
+                        <h4 class="text-2xl font-bold text-white mb-4 group-hover:translate-x-2 transition-transform duration-300">Schedule a Consultation</h4>
+                        <p class="text-gray-400 leading-relaxed mb-4">
+                            Book 30 minutes with us. We'll walk you through what we offer and how we work. No pressure, no commitment—just a conversation about what's possible for your organization.
+                        </p>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="relative pl-12 group">
+                        <div class="absolute top-0 left-0 text-4xl font-black text-white/20 select-none group-hover:text-vcp-yellow transition-colors">2</div>
+                        <h4 class="text-2xl font-bold text-white mb-4 group-hover:translate-x-2 transition-transform duration-300">Discover</h4>
+                        <p class="text-gray-400 leading-relaxed mb-4">
+                            Once you decide to work with us, we deploy an AI chatbot across your organization. Your team shares what's slowing them down—bottlenecks, repetitive tasks, pain points. The AI captures everything, giving us a complete picture of where you're losing time and money.
+                        </p>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="relative pl-12 group">
+                        <div class="absolute top-0 left-0 text-4xl font-black text-white/20 select-none group-hover:text-vcp-yellow transition-colors">3</div>
+                        <h4 class="text-2xl font-bold text-white mb-4 group-hover:translate-x-2 transition-transform duration-300">Build</h4>
+                        <p class="text-gray-400 leading-relaxed mb-4">
+                            We analyze the insights and design your solution. Whether it's automation, integration, or a custom API—we build what actually moves the needle. No guesswork. Just focused solutions based on real data from your team.
+                        </p>
+                    </div>
+
+                    <!-- Step 4 -->
+                    <div class="relative pl-12 group">
+                        <div class="absolute top-0 left-0 text-4xl font-black text-white/20 select-none group-hover:text-vcp-yellow transition-colors">4</div>
+                        <h4 class="text-2xl font-bold text-white mb-4 group-hover:translate-x-2 transition-transform duration-300">Deploy</h4>
+                        <p class="text-gray-400 leading-relaxed mb-4">
+                            We implement, test, and train. You go live with solutions that work from day one. Then we monitor, optimize, and ensure you're getting measurable results—not just new software.
+                        </p>
+                    </div>
+
+                    <!-- Summary & CTA -->
+                    <div class="mt-16 pt-12 border-t border-white/10">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-8 mb-12">
+                            <div>
+                                <div class="text-xs font-bold text-vcp-yellow uppercase mb-2">Timeline</div>
+                                <div class="text-white font-medium">2-4 weeks to live</div>
+                            </div>
+                            <div>
+                                <div class="text-xs font-bold text-vcp-yellow uppercase mb-2">Your Role</div>
+                                <div class="text-white font-medium">One call to start</div>
+                            </div>
+                            <div>
+                                <div class="text-xs font-bold text-vcp-yellow uppercase mb-2">The Result</div>
+                                <div class="text-white font-medium">Hours saved daily</div>
+                            </div>
+                        </div>
+                        
+                        <a href="#contact" class="inline-flex items-center px-8 py-4 bg-vcp-yellow text-black font-bold uppercase tracking-widest hover:bg-white transition-all duration-300 group">
+                            Schedule Consultation
+                            <i data-lucide="arrow-right" class="ml-2 w-4 h-4 transform group-hover:translate-x-1 transition-transform"></i>
+                        </a>
+                    </div>
+
+                </div>
+
+                <!-- Right Column: Kinetic Typography Visual -->
+                <div class="hidden lg:block w-2/5 h-full sticky top-32">
+                    <div class="flex flex-col justify-center items-center h-full space-y-2 select-none">
+                        <!-- AUTO -->
+                        <div class="flex space-x-2 text-[8rem] leading-none font-black text-white/10">
+                            <span class="kinetic-letter">A</span>
+                            <span class="kinetic-letter">U</span>
+                            <span class="kinetic-letter">T</span>
+                            <span class="kinetic-letter">O</span>
+                        </div>
+                        <!-- MATE -->
+                        <div class="flex space-x-2 text-[8rem] leading-none font-black text-white/10">
+                            <span class="kinetic-letter">M</span>
+                            <span class="kinetic-letter">A</span>
+                            <span class="kinetic-letter">T</span>
+                            <span class="kinetic-letter">E</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Collections Section -->
+    <section id="collections" class="py-32 bg-black border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            
+            <!-- New "Cooler" Header: Tech/Industrial Style -->
+            <div class="flex flex-col md:flex-row items-end justify-between mb-24 border-b border-white/10 pb-12">
+                <div>
+                    <span class="font-mono text-vcp-yellow text-sm tracking-widest mb-2 block">> SYSTEM_ARCHIVES</span>
+                    <h2 class="text-7xl md:text-9xl font-black text-white tracking-tighter leading-[0.8]">
+                        THE<br>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-500 to-gray-900">COLLECTIONS</span>
+                    </h2>
+                </div>
+                <div class="hidden md:block text-right">
+                    <div class="font-mono text-xs text-gray-500 mb-1">AVAILABLE_MODULES: 03</div>
+                    <div class="font-mono text-xs text-gray-500">STATUS: <span class="text-green-500 animate-pulse">ONLINE</span></div>
+                    <div class="h-1 w-32 bg-vcp-yellow mt-4 ml-auto"></div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Card 1: Microsoft Ecosystem -->
+                <div class="group relative border border-white/10 rounded-2xl overflow-hidden bg-black hover:border-vcp-yellow/40 hover:shadow-[0_0_30px_rgba(253,196,53,0.1)] transition-all duration-500">
+                     <!-- CSS Microsoft Logo Overlay -->
+                     <div class="absolute top-6 right-6 z-10">
+                        <div class="ms-logo">
+                            <div class="ms-tile ms-red"></div>
+                            <div class="ms-tile ms-green"></div>
+                            <div class="ms-tile ms-blue"></div>
+                            <div class="ms-tile ms-yellow"></div>
+                        </div>
+                    </div>
+                    <div class="h-64 w-full overflow-hidden relative mb-8">
+                         <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80" alt="Microsoft Office" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500 opacity-70">
+                         <div class="absolute top-4 left-4 bg-blue-600 text-white text-[10px] font-bold px-3 py-1 uppercase tracking-widest">Infrastructure</div>
+                    </div>
+                    <div class="px-8 pb-10">
+                        <h3 class="text-2xl font-bold text-white mb-4 group-hover:text-vcp-yellow transition-colors">Microsoft Solutions</h3>
+                        <p class="text-gray-400 text-sm mb-8 leading-relaxed">
+                            End-to-end Dynamics 365 ERP, Power Platform automation, and Azure cloud architecture.
+                        </p>
+                        <button onclick="openContentModal('microsoft')" class="text-vcp-yellow text-xs font-bold uppercase tracking-widest hover:text-white transition-colors focus:outline-none border-b border-vcp-yellow pb-1">View Solutions</button>
+                    </div>
+                </div>
+
+                <!-- Card 2: Digital Transformation & AI -->
+                <div class="group relative border border-white/10 rounded-2xl overflow-hidden bg-black hover:border-vcp-yellow/40 hover:shadow-[0_0_30px_rgba(253,196,53,0.1)] transition-all duration-500">
+                    <div class="h-64 w-full overflow-hidden relative mb-8">
+                         <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80" alt="Data Analysis" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500 opacity-70">
+                         <div class="absolute top-4 left-4 bg-purple-600 text-white text-[10px] font-bold px-3 py-1 uppercase tracking-widest">Transformation</div>
+                    </div>
+                    <div class="px-8 pb-10">
+                        <h3 class="text-2xl font-bold text-white mb-4 group-hover:text-vcp-yellow transition-colors">Digital Transformation & AI</h3>
+                        <p class="text-gray-400 text-sm mb-8 leading-relaxed">
+                            Legacy migrations, custom web development, advanced financial modeling, and predictive analytics.
+                        </p>
+                        <button onclick="openContentModal('transformation')" class="text-vcp-yellow text-xs font-bold uppercase tracking-widest hover:text-white transition-colors focus:outline-none border-b border-vcp-yellow pb-1">Explore Services</button>
+                    </div>
+                </div>
+
+                <!-- Card 3: VCP Proprietary Architect -->
+                <div class="group relative border border-white/10 rounded-2xl overflow-hidden bg-black hover:border-vcp-yellow/40 hover:shadow-[0_0_30px_rgba(253,196,53,0.1)] transition-all duration-500">
+                    <div class="h-64 w-full overflow-hidden relative mb-8">
+                         <img src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=800&q=80" alt="Robot AI" class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500 opacity-70">
+                         <div class="absolute top-4 left-4 bg-vcp-yellow text-black text-[10px] font-bold px-3 py-1 uppercase tracking-widest">Proprietary</div>
+                    </div>
+                    <div class="px-8 pb-10">
+                        <h3 class="text-2xl font-bold text-white mb-4 group-hover:text-vcp-yellow transition-colors">VCP Proprietary Architect</h3>
+                        <p class="text-gray-400 text-sm mb-8 leading-relaxed">
+                            Exclusive access to the VCP Cloud Robot orchestrator, custom API connectivity, and Pain Point AI diagnostics.
+                        </p>
+                        <button onclick="openContentModal('proprietary')" class="text-vcp-yellow text-xs font-bold uppercase tracking-widest hover:text-white transition-colors focus:outline-none border-b border-vcp-yellow pb-1">Discover Tech</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact" class="bg-black border-t border-white/10 pt-24 pb-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 mb-24">
+                
+                <!-- Brand -->
+                <div class="space-y-8">
+                    <!-- Scaled Logo in Footer -->
+                    <div style="transform: scale(0.8); transform-origin: left center;" class="w-[300px]">
+                        <div class="logo-minimal">
+                            <div class="logo-minimal-main">VCP</div>
+                            <div class="logo-minimal-separator"></div>
+                            <div class="logo-minimal-text">
+                                <div class="logo-minimal-line"><span>V</span>egas</div>
+                                <div class="logo-minimal-line"><span>C</span>onsulting</div>
+                                <div class="logo-minimal-line"><span>P</span>artners</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <p class="text-gray-500 text-sm leading-relaxed mt-4">
+                        Redefining hospitality through the lens of technology. Miami-based, globally connected.
+                    </p>
+                    <div class="flex space-x-6">
+                        <a href="#" class="text-gray-400 hover:text-vcp-yellow transition-colors"><i data-lucide="linkedin" class="w-5 h-5"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-vcp-yellow transition-colors"><i data-lucide="twitter" class="w-5 h-5"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-vcp-yellow transition-colors"><i data-lucide="instagram" class="w-5 h-5"></i></a>
+                    </div>
+                </div>
+
+                <!-- Company -->
+                <div>
+                    <h4 class="text-white font-bold mb-8 text-sm uppercase tracking-widest">Company</h4>
+                    <ul class="space-y-4 text-sm text-gray-500">
+                        <li><a href="#" class="hover:text-vcp-yellow transition-colors">About VCP</a></li>
+                        <li><a href="#" class="hover:text-vcp-yellow transition-colors">Careers</a></li>
+                        <li><a href="#" class="hover:text-vcp-yellow transition-colors">Press Room</a></li>
+                        <li><a href="#" class="hover:text-vcp-yellow transition-colors">Contact</a></li>
+                    </ul>
+                </div>
+
+                <!-- Services -->
+                <div>
+                    <h4 class="text-white font-bold mb-8 text-sm uppercase tracking-widest">Services</h4>
+                    <ul class="space-y-4 text-sm text-gray-500">
+                        <li><a href="#" class="hover:text-vcp-yellow transition-colors">Automation Audit</a></li>
+                        <li><a href="#" class="hover:text-vcp-yellow transition-colors">AI Integration</a></li>
+                        <li><a href="#" class="hover:text-vcp-yellow transition-colors">Data Analytics</a></li>
+                        <li><a href="#" class="hover:text-vcp-yellow transition-colors">Infrastructure</a></li>
+                    </ul>
+                </div>
+
+                <!-- Legal -->
+                <div>
+                    <h4 class="text-white font-bold mb-8 text-sm uppercase tracking-widest">Legal</h4>
+                    <ul class="space-y-4 text-sm text-gray-500">
+                        <li><a href="#" class="hover:text-vcp-yellow transition-colors">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-vcp-yellow transition-colors">Terms of Service</a></li>
+                        <li><a href="#" class="hover:text-vcp-yellow transition-colors">Cookie Settings</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-white/5 pt-12 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-600 text-xs">© 2023 Vegas Consulting Partners. All rights reserved.</p>
+                <p class="text-gray-600 text-xs mt-4 md:mt-0 uppercase tracking-widest">Designed for the future.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Universal Content Modal (Same as previous) -->
+    <div id="content-modal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="fixed inset-0 bg-black/95 transition-opacity backdrop-blur-lg" onclick="closeContentModal()"></div>
+        <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                <div class="relative transform overflow-hidden rounded-none bg-[#050505] border border-vcp-glassBorder text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-6xl">
+                    <div class="bg-black border-b border-vcp-glassBorder px-6 py-6 flex justify-between items-center">
+                        <h3 class="text-xl font-bold leading-6 text-white" id="modal-title">Service Details</h3>
+                        <button onclick="closeContentModal()" type="button" class="text-gray-400 hover:text-white focus:outline-none">
+                            <i data-lucide="x" class="w-6 h-6"></i>
+                        </button>
+                    </div>
+                    <div class="px-6 py-8 bg-black" id="modal-body"></div>
+                    <div class="bg-black border-t border-vcp-glassBorder px-6 py-4 sm:flex sm:flex-row-reverse">
+                        <a href="#contact" onclick="closeContentModal()" class="inline-flex w-full justify-center rounded-none border border-vcp-yellow bg-vcp-yellow px-6 py-3 text-xs font-bold uppercase text-black shadow-sm hover:bg-transparent hover:text-vcp-yellow transition-all sm:ml-3 sm:w-auto">Schedule Consultation</a>
+                        <button type="button" onclick="closeContentModal()" class="mt-3 inline-flex w-full justify-center rounded-none bg-white/5 px-6 py-3 text-xs font-bold uppercase text-gray-300 shadow-sm ring-1 ring-inset ring-gray-700 hover:bg-white/10 sm:mt-0 sm:w-auto">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        lucide.createIcons();
+
+        // PRELOADER LOGIC
+        window.addEventListener('load', () => {
+            // Force scroll to top again on load just to be safe
+            window.scrollTo(0, 0);
+            
+            const preloader = document.getElementById('preloader');
+            setTimeout(() => {
+                preloader.style.opacity = '0';
+                document.body.style.overflow = 'auto';
+                setTimeout(() => {
+                    preloader.style.display = 'none';
+                    // Add smooth scrolling class after preloader is gone
+                    document.documentElement.classList.add('smooth-scroll');
+                }, 800);
+            }, 6000); // Increased to 6 seconds to allow full logo animation to finish
+        });
+
+        // --- Content Data ---
+        const contentData = {
+            'microsoft': `
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="border border-white/10 p-6 hover:border-blue-500/50 transition-colors">
+                        <div class="flex items-center mb-4"><i data-lucide="briefcase" class="w-5 h-5 text-blue-500 mr-3"></i><h4 class="font-bold text-white">Dynamics 365</h4></div>
+                        <ul class="space-y-2 text-sm text-gray-400">
+                            <li><strong>Sales:</strong> VIP guest & event booking tracking.</li>
+                            <li><strong>Finance:</strong> Multi-location accounting & revenue.</li>
+                            <li><strong>Operations:</strong> Supply chain & inventory optimization.</li>
+                        </ul>
+                    </div>
+                     <div class="border border-white/10 p-6 hover:border-purple-500/50 transition-colors">
+                        <div class="flex items-center mb-4"><i data-lucide="layers" class="w-5 h-5 text-purple-500 mr-3"></i><h4 class="font-bold text-white">Power Platform</h4></div>
+                        <ul class="space-y-2 text-sm text-gray-400">
+                            <li><strong>Power Apps:</strong> Custom reservation & scanner apps.</li>
+                            <li><strong>Power Automate:</strong> POS to accounting sync workflows.</li>
+                            <li><strong>Power Pages:</strong> Branded customer portals.</li>
+                        </ul>
+                    </div>
+                    <div class="border border-white/10 p-6 hover:border-yellow-500/50 transition-colors">
+                        <div class="flex items-center mb-4"><i data-lucide="bar-chart-2" class="w-5 h-5 text-yellow-500 mr-3"></i><h4 class="font-bold text-white">Power BI</h4></div>
+                        <ul class="space-y-2 text-sm text-gray-400">
+                            <li><strong>Dashboards:</strong> Real-time mobile KPI views.</li>
+                            <li><strong>Modeling:</strong> Complex DAX & Star Schema design.</li>
+                            <li><strong>Analytics:</strong> Menu item profitability & labor cost %.</li>
+                        </ul>
+                    </div>
+                    <div class="border border-white/10 p-6 hover:border-green-500/50 transition-colors">
+                        <div class="flex items-center mb-4"><i data-lucide="table" class="w-5 h-5 text-green-500 mr-3"></i><h4 class="font-bold text-white">Excel & M365</h4></div>
+                        <ul class="space-y-2 text-sm text-gray-400">
+                            <li><strong>Automation:</strong> VBA & Power Query templates.</li>
+                            <li><strong>Copilot:</strong> AI-powered document insights.</li>
+                            <li><strong>Financials:</strong> Dynamic P&L & forecasting models.</li>
+                        </ul>
+                    </div>
+                    <div class="border border-white/10 p-6 hover:border-blue-300/50 transition-colors">
+                        <div class="flex items-center mb-4"><i data-lucide="cloud" class="w-5 h-5 text-blue-300 mr-3"></i><h4 class="font-bold text-white">Azure Cloud</h4></div>
+                        <ul class="space-y-2 text-sm text-gray-400">
+                            <li><strong>Integration:</strong> API middleware & data sync.</li>
+                            <li><strong>SQL Database:</strong> Centralized multi-site storage.</li>
+                            <li><strong>AI Services:</strong> Sentiment analysis & demand forecasting.</li>
+                        </ul>
+                    </div>
+                     <div class="border border-white/10 p-6 hover:border-teal-500/50 transition-colors">
+                        <div class="flex items-center mb-4"><i data-lucide="code" class="w-5 h-5 text-teal-500 mr-3"></i><h4 class="font-bold text-white">Python ETL</h4></div>
+                        <ul class="space-y-2 text-sm text-gray-400">
+                            <li><strong>Scripts:</strong> Automated web scraping & data extraction.</li>
+                            <li><strong>SharePoint:</strong> Auto-upload & version control.</li>
+                            <li><strong>Workflow:</strong> Login -> Extract -> Append -> Refresh.</li>
+                        </ul>
+                    </div>
+                </div>
+            `,
+            'transformation': `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="border border-white/10 p-8 bg-white/5">
+                        <h4 class="text-lg font-bold text-vcp-yellow mb-4 uppercase tracking-widest">Legacy Migration & Integration</h4>
+                        <p class="text-gray-400 text-sm mb-4 leading-relaxed">
+                            We specialize in moving hospitality firms from outdated legacy systems to modern, cloud-native architectures. Our integration services connect disparate systems (POS, PMS, CRM) into a unified data lake, leveraging the latest AI middleware to ensure seamless communication.
+                        </p>
+                        <ul class="space-y-2 text-sm text-white">
+                            <li>• Cloud Migration Strategy</li>
+                            <li>• Unified Data API Development</li>
+                            <li>• Legacy System Sunsetting</li>
+                        </ul>
+                    </div>
+                    <div class="border border-white/10 p-8 bg-white/5">
+                        <h4 class="text-lg font-bold text-vcp-yellow mb-4 uppercase tracking-widest">Websites & Digital Experience</h4>
+                        <p class="text-gray-400 text-sm mb-4 leading-relaxed">
+                            Beyond standard templates, we build custom, high-performance web experiences integrated directly with your operational databases. From reservation portals to dynamic event showcases, we create digital assets that drive revenue.
+                        </p>
+                         <ul class="space-y-2 text-sm text-white">
+                            <li>• Custom React/Next.js Development</li>
+                            <li>• Real-time Inventory/Booking Integration</li>
+                            <li>• SEO & Performance Optimization</li>
+                        </ul>
+                    </div>
+                     <div class="border border-white/10 p-8 bg-white/5 md:col-span-2">
+                        <h4 class="text-lg font-bold text-vcp-yellow mb-4 uppercase tracking-widest">Advanced Analytics & Financial Modeling</h4>
+                        <p class="text-gray-400 text-sm mb-4 leading-relaxed">
+                            Turn raw data into actionable financial intelligence. We build sophisticated financial models that predict labor costs, optimize menu pricing, and forecast revenue with high precision using historical data and AI trend analysis.
+                        </p>
+                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm text-white">
+                            <div class="bg-black p-4 border border-white/10">📊 Predictive P&L</div>
+                            <div class="bg-black p-4 border border-white/10">👥 Labor Optimization</div>
+                            <div class="bg-black p-4 border border-white/10">💰 Menu Engineering</div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            'proprietary': `
+                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="border border-vcp-yellow/30 p-8 bg-vcp-yellow/5 flex flex-col items-center text-center relative overflow-hidden group">
+                         <div class="absolute inset-0 bg-vcp-yellow/10 transform scale-0 group-hover:scale-100 transition-transform duration-500 rounded-full opacity-20 blur-3xl"></div>
+                         <i data-lucide="bot" class="w-12 h-12 text-vcp-yellow mb-6"></i>
+                        <h4 class="text-xl font-bold text-white mb-2">VCP Cloud Robot</h4>
+                        <p class="text-gray-400 text-sm leading-relaxed">
+                            Our proprietary orchestration engine. The Cloud Robot sits on top of your tech stack, automating complex, multi-step workflows that standard integrations can't handle. It's the invisible employee that never sleeps.
+                        </p>
+                    </div>
+                    <div class="border border-vcp-yellow/30 p-8 bg-vcp-yellow/5 flex flex-col items-center text-center relative overflow-hidden group">
+                         <div class="absolute inset-0 bg-vcp-yellow/10 transform scale-0 group-hover:scale-100 transition-transform duration-500 rounded-full opacity-20 blur-3xl"></div>
+                        <i data-lucide="bar-chart-4" class="w-12 h-12 text-vcp-yellow mb-6"></i>
+                        <h4 class="text-xl font-bold text-white mb-2">VCP Sales Intelligence API</h4>
+                        <p class="text-gray-400 text-sm leading-relaxed">
+                            <strong>Your sales data. Simplified.</strong><br>
+                            Stop logging into multiple systems. One API aggregates daily revenue, guest counts, top sellers, and labor costs. Delivered to your inbox at 6am. Every day.
+                        </p>
+                    </div>
+                    <div class="border border-vcp-yellow/30 p-8 bg-vcp-yellow/5 flex flex-col items-center text-center relative overflow-hidden group">
+                         <div class="absolute inset-0 bg-vcp-yellow/10 transform scale-0 group-hover:scale-100 transition-transform duration-500 rounded-full opacity-20 blur-3xl"></div>
+                        <i data-lucide="message-circle" class="w-12 h-12 text-vcp-yellow mb-6"></i>
+                        <h4 class="text-xl font-bold text-white mb-2">Pain Point AI</h4>
+                        <p class="text-gray-400 text-sm leading-relaxed">
+                            An intelligent chatbot for every employee to voice concerns. It digs deep to uncover hidden operational friction, prioritizes critical issues the CEO might miss, and designs strategic solutions for future stability.
+                        </p>
+                    </div>
+                </div>
+            `
+        };
+
+        // --- Navbar Logic ---
+        let lastScroll = 0;
+        const navbar = document.getElementById('navbar');
+        
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+            if (currentScroll <= 0) {
+                navbar.classList.remove('nav-hidden');
+                return;
+            }
+            if (currentScroll > lastScroll && !navbar.classList.contains('nav-hidden')) {
+                navbar.classList.remove('nav-visible');
+                navbar.classList.add('nav-hidden');
+            } else if (currentScroll < lastScroll && navbar.classList.contains('nav-hidden')) {
+                navbar.classList.remove('nav-hidden');
+                navbar.classList.add('nav-visible');
+            }
+            lastScroll = currentScroll;
+        });
+
+        // --- Modal & Menu Logic ---
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const closeMenuBtn = document.getElementById('close-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const modal = document.getElementById('content-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalBody = document.getElementById('modal-body');
+
+        function toggleMenu() {
+            mobileMenu.classList.toggle('translate-x-full');
+            document.body.classList.toggle('overflow-hidden');
+        }
+
+        function openContentModal(type) {
+            const titles = {
+                'microsoft': 'Microsoft Ecosystem & Solutions',
+                'transformation': 'Digital Transformation & AI Services',
+                'proprietary': 'VCP Proprietary Technologies'
+            };
+            
+            modalTitle.textContent = titles[type];
+            modalBody.innerHTML = contentData[type];
+            lucide.createIcons(); // Re-init icons for injected content
+            
+            modal.classList.remove('hidden');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeContentModal() {
+            modal.classList.add('hidden');
+            document.body.classList.remove('modal-open');
+        }
+
+        mobileMenuBtn.addEventListener('click', toggleMenu);
+        closeMenuBtn.addEventListener('click', toggleMenu);
+
+        // Escape key to close
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+                closeContentModal();
+            }
+        });
+
+        // --- Text Rotation ---
+        const words = document.querySelectorAll('.rotating-word');
+        let currentWordIndex = 0;
+        if(words.length > 0) {
+            setInterval(() => {
+                const current = words[currentWordIndex];
+                const nextIndex = (currentWordIndex + 1) % words.length;
+                const next = words[nextIndex];
+                
+                current.classList.remove('word-visible');
+                current.classList.add('word-exiting');
+                next.classList.remove('word-hidden');
+                next.classList.add('word-visible');
+                
+                setTimeout(() => {
+                    current.classList.remove('word-exiting');
+                    current.classList.add('word-hidden');
+                }, 600);
+                currentWordIndex = nextIndex;
+            }, 3000);
+        }
+
+        // --- HERO ENERGY TREE LOGIC ---
+        const canvas = document.getElementById('hero-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let particles = [];
+        let roots = [];
+        let pulses = [];
+        let rings = [];
+        let dataStreams = [];
+        let globalAngle = 0;
+        let mouseX = 0;
+        let mouseY = 0;
+        let targetRotationX = 0;
+        let targetRotationY = 0;
+
+        function resize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+            initSystem();
+        }
+        
+        window.addEventListener('mousemove', (e) => {
+            mouseX = (e.clientX - width / 2) / width;
+            mouseY = (e.clientY - height / 2) / height;
+        });
+
+        // PARTICLE CLASS (Tree Canopy)
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                const theta = Math.random() * Math.PI * 2;
+                const phi = Math.acos(2 * Math.random() - 1);
+                const r = 220 + Math.random() * 180; // Much larger radius
+
+                this.x = r * Math.sin(phi) * Math.cos(theta);
+                this.y = r * Math.sin(phi) * Math.sin(theta) - 80;
+                this.z = r * Math.cos(phi);
+                
+                this.baseX = this.x;
+                this.baseY = this.y;
+                this.baseZ = this.z;
+
+                this.size = Math.random() * 3 + 1.5;
+                this.color = Math.random() > 0.3 ? '#fdc435' : '#ff9d00';
+                this.alpha = 0.2 + Math.random() * 0.6;
+                
+                this.swaySpeed = 0.001 + Math.random() * 0.002;
+                this.swayOffset = Math.random() * 100;
+            }
+            update(time) {
+                const sway = Math.sin(time * 0.001 + this.swayOffset) * 5;
+                this.x = this.baseX + sway;
+                this.y = this.baseY + Math.cos(time * 0.001 + this.swayOffset) * 3;
+            }
+            draw(cx, cy, scale, rotCos, rotSin, tiltX) {
+                // Y-axis rotation
+                let px = this.x * rotCos - this.z * rotSin;
+                let pz = this.x * rotSin + this.z * rotCos;
+                let py = this.y;
+                
+                // X-axis rotation (Tilt)
+                let py2 = py * Math.cos(tiltX) - pz * Math.sin(tiltX);
+                let pz2 = py * Math.sin(tiltX) + pz * Math.cos(tiltX);
+
+                const perspective = 900 / (900 + pz2);
+                const x2d = cx + px * perspective;
+                const y2d = cy + py2 * perspective;
+                const s = this.size * perspective;
+
+                if (perspective > 0) {
+                    ctx.globalAlpha = this.alpha * perspective;
+                    ctx.fillStyle = this.color;
+                    ctx.beginPath();
+                    ctx.arc(x2d, y2d, s, 0, Math.PI*2);
+                    // High Bloom for cool factor
+                    ctx.shadowBlur = 20 * perspective;
+                    ctx.shadowColor = this.color;
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                }
+            }
+        }
+
+        // ORBITAL RING CLASS
+        class OrbitalRing {
+            constructor(radius, speed, inclination) {
+                this.radius = radius;
+                this.speed = speed;
+                this.inclination = inclination;
+                this.angle = Math.random() * Math.PI * 2;
+                this.particles = [];
+                for(let i=0; i<40; i++) {
+                    this.particles.push({ offset: Math.random() * Math.PI * 2, size: Math.random() * 2 });
+                }
+            }
+            draw(cx, cy, rotCos, rotSin, tiltX) {
+                this.angle += this.speed;
+                
+                this.particles.forEach(p => {
+                    const a = this.angle + p.offset;
+                    let x = Math.cos(a) * this.radius;
+                    let z = Math.sin(a) * this.radius;
+                    let y = Math.sin(a + this.inclination) * (this.radius * 0.3); // Tilt
+
+                    // Apply global rotations
+                    let px = x * rotCos - z * rotSin;
+                    let pz = x * rotSin + z * rotCos;
+                    
+                    // X-axis tilt from mouse
+                    let py2 = y * Math.cos(tiltX) - pz * Math.sin(tiltX);
+                    let pz2 = y * Math.sin(tiltX) + pz * Math.cos(tiltX);
+                    
+                    const perspective = 900 / (900 + pz2);
+                    const x2d = cx + px * perspective;
+                    const y2d = cy + py2 * perspective - 80; // Center on canopy
+
+                    if (perspective > 0) {
+                        ctx.globalAlpha = 0.4 * perspective;
+                        ctx.fillStyle = '#fdc435';
+                        ctx.beginPath();
+                        ctx.arc(x2d, y2d, p.size * perspective, 0, Math.PI*2);
+                        ctx.fill();
+                    }
+                });
+            }
+        }
+        
+        // DATA STREAM CLASS (Rising particles)
+        class DataStream {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = (Math.random() - 0.5) * 30; // Trunk width
+                this.y = 300; // Bottom
+                this.z = (Math.random() - 0.5) * 30;
+                this.speed = 2 + Math.random() * 3;
+                this.size = Math.random() * 2;
+                this.life = 1;
+            }
+            update() {
+                this.y -= this.speed;
+                this.life -= 0.01;
+                if (this.y < -100 || this.life <= 0) this.reset();
+            }
+            draw(cx, cy, rotCos, rotSin, tiltX) {
+                // Y-axis rotation
+                let px = this.x * rotCos - this.z * rotSin;
+                let pz = this.x * rotSin + this.z * rotCos;
+                let py = this.y;
+                
+                // X-axis rotation
+                let py2 = py * Math.cos(tiltX) - pz * Math.sin(tiltX);
+                let pz2 = py * Math.sin(tiltX) + pz * Math.cos(tiltX);
+
+                const perspective = 900 / (900 + pz2);
+                const x2d = cx + px * perspective;
+                const y2d = cy + py2 * perspective;
+
+                if(perspective > 0) {
+                    ctx.globalAlpha = this.life * 0.8;
+                    ctx.fillStyle = '#ffffff'; // White data sparks
+                    ctx.beginPath();
+                    ctx.arc(x2d, y2d, this.size * perspective, 0, Math.PI*2);
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = '#ffffff';
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                }
+            }
+        }
+
+        // ROOT & PULSE LOGIC
+        function generateRootPath(x, y, angle, depth, maxDepth) {
+            if (depth >= maxDepth) return;
+            const length = 150 + Math.random() * 150; // Increased length
+            const endX = x + Math.cos(angle) * length;
+            const endY = y + Math.sin(angle) * length;
+            roots.push({ x1: x, y1: y, x2: endX, y2: endY, depth: depth });
+
+            const numBranches = Math.floor(Math.random() * 2) + 1;
+            for(let i=0; i<numBranches; i++) {
+                const deviation = (Math.random() - 0.5) * 1.0;
+                const newAngle = angle + deviation;
+                if (endY < height + 200 && endX > -200 && endX < width + 200) {
+                    generateRootPath(endX, endY, newAngle, depth + 1, maxDepth);
+                }
+            }
+        }
+
+        class Pulse {
+            constructor() { this.reset(); }
+            reset() {
+                const startSeg = roots.filter(r => r.depth === 0)[Math.floor(Math.random() * roots.filter(r => r.depth === 0).length)];
+                if(!startSeg) return;
+                this.x = startSeg.x1; this.y = startSeg.y1;
+                this.targetX = startSeg.x2; this.targetY = startSeg.y2;
+                this.progress = 0; this.speed = 0.02 + Math.random() * 0.03;
+                this.alive = true; this.history = [];
+            }
+            update() {
+                if(!this.alive) return;
+                this.history.push({x: this.x, y: this.y});
+                if(this.history.length > 15) this.history.shift();
+                this.progress += this.speed;
+                this.x = this.x + (this.targetX - this.x) * this.speed;
+                this.y = this.y + (this.targetY - this.y) * this.speed;
+                const dx = this.targetX - this.x;
+                const dy = this.targetY - this.y;
+                if (Math.sqrt(dx*dx + dy*dy) < 5) {
+                    const nextSegs = roots.filter(r => Math.abs(r.x1 - this.targetX) < 1 && Math.abs(r.y1 - this.targetY) < 1);
+                    if (nextSegs.length > 0) {
+                        const next = nextSegs[Math.floor(Math.random() * nextSegs.length)];
+                        this.x = next.x1; this.y = next.y1;
+                        this.targetX = next.x2; this.targetY = next.y2;
+                    } else {
+                        this.reset();
+                    }
+                }
+            }
+            draw() {
+                if(!this.alive) return;
+                ctx.shadowBlur = 15; ctx.shadowColor = '#ff9d00'; ctx.fillStyle = '#ffffff';
+                ctx.beginPath(); ctx.arc(this.x, this.y, 2, 0, Math.PI*2); ctx.fill();
+                ctx.shadowBlur = 0; ctx.beginPath();
+                ctx.moveTo(this.x, this.y);
+                for(let i=this.history.length-1; i>=0; i--) ctx.lineTo(this.history[i].x, this.history[i].y);
+                ctx.strokeStyle = `rgba(253, 196, 53, 0.8)`; ctx.lineWidth = 2; ctx.stroke();
+            }
+        }
+
+        function initSystem() {
+            particles = []; roots = []; pulses = []; rings = []; dataStreams = [];
+            for(let i=0; i<500; i++) particles.push(new Particle());
+            
+            const startX = width * 0.5;
+            const startY = height * 0.6; // Trunk base
+            
+            // Symmetrical Roots
+            for(let i=0; i<8; i++) {
+                const angle = (Math.PI / 4) + (i * (Math.PI/4)); // 8 directions
+                generateRootPath(startX, startY, angle, 0, 5);
+            }
+            for(let i=0; i<20; i++) pulses.push(new Pulse());
+            
+            // Rings
+            rings.push(new OrbitalRing(350, 0.005, 0.2)); // Larger
+            rings.push(new OrbitalRing(480, -0.003, -0.1)); // Larger
+            
+            // Data Streams
+            for(let i=0; i<30; i++) dataStreams.push(new DataStream());
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            
+            // Mouse Interaction (Smooth Inertia)
+            targetRotationY += (mouseX * 0.5 - targetRotationY) * 0.05;
+            targetRotationX += (mouseY * 0.2 - targetRotationX) * 0.05;
+            
+            // Roots
+            ctx.lineWidth = 0.5;
+            ctx.strokeStyle = 'rgba(253, 196, 53, 0.1)';
+            ctx.beginPath();
+            roots.forEach(r => { ctx.moveTo(r.x1, r.y1); ctx.lineTo(r.x2, r.y2); });
+            ctx.stroke();
+
+            // Pulses
+            pulses.forEach(p => { p.update(); p.draw(); });
+
+            // 3D Elements
+            const time = Date.now();
+            globalAngle += 0.002;
+            const totalRotY = globalAngle + targetRotationY;
+            const rotCos = Math.cos(totalRotY);
+            const rotSin = Math.sin(totalRotY);
+            const cx = width * 0.5;
+            const cy = height * 0.55;
+
+            // Sort
+            particles.sort((a, b) => {
+                const az = a.x * rotSin + a.z * rotCos;
+                const bz = b.x * rotSin + b.z * rotCos;
+                return bz - az;
+            });
+
+            // Draw Streams
+            dataStreams.forEach(s => { s.update(); s.draw(cx, cy + 150, rotCos, rotSin, targetRotationX); });
+
+            // Draw Particles
+            particles.forEach(p => { p.update(time); p.draw(cx, cy, 1, rotCos, rotSin, targetRotationX); });
+            
+            // Draw Rings
+            rings.forEach(r => r.draw(cx, cy, rotCos, rotSin, targetRotationX));
+
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', resize);
+        resize(); // Initial resize call
+        animate();
+
+    </script>
+</body>
+</html>
