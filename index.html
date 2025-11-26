@@ -404,7 +404,7 @@
             <a href="#features" class="text-2xl text-white font-light hover:text-vcp-yellow">The Concept</a>
             <a href="#how-it-works" class="text-2xl text-white font-light hover:text-vcp-yellow">How It Works</a>
             <a href="#collections" class="text-2xl text-white font-light hover:text-vcp-yellow">Collections</a>
-            <a href="#contact" class="text-xl text-black bg-vcp-yellow px-8 py-3 font-bold uppercase">Contact Us</a>
+            <a href="schedule-consultation.html" class="text-xl text-black bg-vcp-yellow px-8 py-4 font-bold uppercase tracking-widest">Schedule a Consultation</a>
         </div>
     </nav>
 
@@ -494,7 +494,7 @@
                     </div>
                 </div>
                 <div class="w-full md:w-1/2 relative h-[400px] rounded-lg overflow-hidden border border-white/10 group">
-                    <video autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover opacity-60 grayscale group-hover:grayscale-0 transition-all duration-700 scale-105 group-hover:scale-100">
+                    <video autoplay loop muted playsinline webkit-playsinline preload="auto" class="absolute inset-0 w-full h-full object-cover opacity-60 grayscale group-hover:grayscale-0 transition-all duration-700 scale-105 group-hover:scale-100" id="video-1">
                         <source src="Asset_Fast_time.mp4" type="video/mp4">
                         Your browser does not support the video tag.
                     </video>
@@ -520,7 +520,7 @@
                     </div>
                 </div>
                 <div class="w-full md:w-1/2 relative h-[400px] rounded-lg overflow-hidden border border-white/10 group">
-                    <video autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover opacity-60 grayscale group-hover:grayscale-0 transition-all duration-700 scale-105 group-hover:scale-100">
+                    <video autoplay loop muted playsinline webkit-playsinline preload="auto" class="absolute inset-0 w-full h-full object-cover opacity-60 grayscale group-hover:grayscale-0 transition-all duration-700 scale-105 group-hover:scale-100" id="video-2">
                         <source src="Reading_man.mp4" type="video/mp4">
                         Your browser does not support the video tag.
                     </video>
@@ -869,7 +869,7 @@
         window.addEventListener('load', () => {
             // Force scroll to top again on load just to be safe
             window.scrollTo(0, 0);
-            
+
             const preloader = document.getElementById('preloader');
             setTimeout(() => {
                 preloader.style.opacity = '0';
@@ -880,6 +880,24 @@
                     document.documentElement.classList.add('smooth-scroll');
                 }, 800);
             }, 6000); // Increased to 6 seconds to allow full logo animation to finish
+        });
+
+        // MOBILE VIDEO FIX - Force videos to play on mobile
+        document.addEventListener('DOMContentLoaded', () => {
+            const videos = document.querySelectorAll('video');
+            videos.forEach(video => {
+                // Attempt to play each video
+                const playPromise = video.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(error => {
+                        // Auto-play was prevented, try again on user interaction
+                        console.log('Video autoplay prevented, will retry on interaction');
+                        document.addEventListener('touchstart', () => {
+                            video.play();
+                        }, { once: true });
+                    });
+                }
+            });
         });
 
         // --- Content Data ---
